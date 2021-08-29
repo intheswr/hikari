@@ -1,2 +1,2 @@
 # hikari
-osu! auth / general internal api wrapper.
+accurate osu! name checker.
