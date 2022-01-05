@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,18 +28,23 @@ type Response struct {
 	CostString string `json:"costString"`
 }
 
-func (c *User) getConf() *User {
+func (c *User) loadConf() *User {
+	exist := doesExist("config.yaml")
+	if exist {
+		yamlFile, err := ioutil.ReadFile("config.yaml")
+		if err != nil {
+			log.Printf("yamlFile.Get err   #%v ", err)
+		}
+		err = yaml.Unmarshal(yamlFile, c)
+		if err != nil {
+			log.Fatalf("Unmarshal: %v", err)
+		}
 
-	yamlFile, err := ioutil.ReadFile("config.yaml")
-	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		return c
+	} else {
+		genConfig("config.yaml", "session:\nxsrf:")
 	}
-	err = yaml.Unmarshal(yamlFile, c)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
-	}
-
-	return c
+	return nil
 }
 
 func (c *User) checkUser(user string) {
@@ -93,22 +99,46 @@ func (c *User) checkUser(user string) {
 
 func main() {
 	var c User
-	c.getConf()
+	c.loadConf()
 
-	f, _ := os.Open("list.txt")
+	exist := doesExist("list.txt")
 
-	scanner := bufio.NewScanner(f)
+	if exist {
+		f, _ := os.Open("list.txt")
 
-	items := 0
-	for scanner.Scan() {
-		line := scanner.Text()
-		c.checkUser(line)
-		items += 1
-		if items >= 60 {
-			fmt.Println("Sleeping for 60 seconds to prevent ratelimiting...")
-			time.Sleep(60 * time.Second)
-			items = 0
+		scanner := bufio.NewScanner(f)
+
+		items := 0
+		for scanner.Scan() {
+			line := scanner.Text()
+			c.checkUser(line)
+			items += 1
+			if items >= 60 {
+				fmt.Println("Sleeping for 60 seconds to prevent ratelimiting...")
+				time.Sleep(60 * time.Second)
+				items = 0
+			}
 		}
+	} else {
+		_, err := os.Create("list.txt")
+		if err != nil {
+			panic(err)
+		}
+		main()
 	}
 
+}
+
+func doesExist(path string) bool {
+	_, err := os.Stat(path)
+	return !errors.Is(err, os.ErrNotExist)
+}
+
+func genConfig(path string, data string) {
+	f, e := os.Create(path)
+	if e != nil {
+		panic(e)
+	}
+	fmt.Fprint(f, data)
+	main()
 }
