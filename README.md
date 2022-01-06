@@ -6,10 +6,18 @@ accurate osu! name checker.
 ## instructions
 first off, download the latest release, and put it inside it's own folder.
 
-after you have downloaded hikari, you'll need to obtain both your osu! session token and your xsrf token.
+after you have downloaded hikari, you'll need to obtain both your osu! session token and your xsrf token. you will need to logged into, and on the osu! website.
 
-you will find these two tokens by opening developer tools (F12 on your keyboard) and heading to the "storage" tab.
-clicking on "Cookies" and opening the "osu.ppy.sh" tab will reveal both of these values. double click on the value section of each token, and paste them into their respective place in the "config.yaml" file.
+### chromium based browsers
+navigate to the search bar and click the "lock" icon
+click cookies --> ppy.sh --> cookies
+click xsrf_token then copy the content and paste it into the respective value in the config.yaml 
+repeat the same for osu! session
+
+### firefox based browsers
+you will find these two tokens by opening developer tools (F12 on your keyboard) and heading to the "storage" tab
+clicking on "Cookies" and opening the "osu.ppy.sh" tab will reveal both of these values
+double click on the value section of each token, and paste them into their respective place in the "config.yaml" file
 
 you will then need to add your own word list under the file name "lists.txt"
 
