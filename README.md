@@ -21,6 +21,30 @@ double click on the value section of each token, and paste them into their respe
 
 you will then need to add your own word list under the file name "lists.txt"
 
+## config explaination
+the user section is where you place both your osu!session token as well as your xsrf token, both of which you should have gotten in the previous steps.
+```yaml
+user: 
+  session: ~
+  xsrf: ~
+```
+
+the discord section is where you will enable discord webhooks for when usernames are found. active will toggle this feature, and webhook is where you place the webhook url (discord intergration is not complete yet.)
+```yaml
+discord:
+  active: false
+  webhook: ~
+ ```
+ 
+ the config section decides the specifics of what hikari will do. requests defines the amount of names that will be checked before hikari pauses to prevent ratelimiting, while the cooldown is the time in seconds of how long this pause will be. verbose will toggle the showing of unavailable names, as well as a few other things that may help with debugging. the dropping option will dictate whether or not names that will soon be available are classed as available or not. dropping names will have the date appended to the end of the username.
+```yaml
+config:
+  requests: 60
+  cooldown: 60
+  verbose: true
+  dropping: false
+```
+
 ## compiling from source (last resort)
 using the latest version of both [git](https://git-scm.com/) and [go](https://golang.org/dl/):
 ```sh
